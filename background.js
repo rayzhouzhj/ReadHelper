@@ -1,14 +1,18 @@
 
-var currentLinkIndex=1;
-var startReading=false;
-var interval = 2;
-var speed=10;
-var timeout=0.5;
+let currentLinkIndex=1;
+let startReading=false;
+let interval = 2;
+let speed=10;
+let timeout=0.5;
+let homeWindow;
+let homeTab;
+let childTab;
 
 function readArticle() {
-    chrome.windows.getCurrent(function (currentWindow) {
-        chrome.tabs.query({ active: true, windowId: currentWindow.id },
+    // chrome.windows.getCurrent(function (currentWindow) {
+    chrome.tabs.query({ active: true, windowId: homeWindow.id },
             function (activeTabs) {
+                alert("Chile Tab" + activeTabs[0].id);
                 chrome.tabs.executeScript(
                     activeTabs[0].id,
                     {
@@ -19,26 +23,26 @@ function readArticle() {
                             { file: 'scroll.js', allFrames: true });
                     });
             });
-    });
+    // });
 };
 
 function clickLink() {
     
-    chrome.windows.getCurrent(function (currentWindow) {
-        chrome.tabs.query({ active: true, windowId: currentWindow.id },
+    // chrome.windows.getCurrent(function (currentWindow) {
+    //     chrome.tabs.query({ active: true, windowId: currentWindow.id },
 
-            function (activeTabs) {
+    //         function (activeTabs) {
                 chrome.tabs.executeScript(
-                    activeTabs[0].id,
+                    homeTab.id,
                     {
                         code: `var index = ${currentLinkIndex};`
                     },
                     function () {
-                        chrome.tabs.executeScript(activeTabs[0].id,
+                        chrome.tabs.executeScript(homeTab.id,
                             { file: 'click_links.js', allFrames: true });
                     });
-            });
-    });
+    //         });
+    // });
 };
 
 chrome.runtime.onMessage.addListener(function (message, callback) {
@@ -50,7 +54,15 @@ chrome.runtime.onMessage.addListener(function (message, callback) {
         timeout = message.scrollTimeout;
         interval = message.readInterval;
 
-        setTimeout(clickLink, 2000);
+        chrome.windows.getCurrent(function (currentWindow) {
+            homeWindow = currentWindow;
+            chrome.tabs.query({ active: true, windowId: homeWindow.id }, function (activeTabs) {
+                homeTab = activeTabs[0];
+
+                // alert(`current window: (${homeWindow.id}) with tab: ${homeTab.id}`);
+                setTimeout(clickLink, 2000);
+            });
+        });
 
     } else if (message.page === "popup" && message.status === "STOP") {
         startReading = false;
