@@ -7,7 +7,7 @@ Simple open the article list(e.g. the google search result page), then click the
 - Scrolls down automatically with your predefined speed till end of article;
 - Close page and back to article list and help you open another link until all links are read.
 
-# For variables:
+### Variables:
 * **Start From** => The index of next link to be opened
 * **Read Every** => Interval to open another article
 * **Scroll By** => The speed of scrolling down, e.g. scroll down 10 pixels each time
