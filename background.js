@@ -9,40 +9,32 @@ let homeTab;
 let childTab;
 
 function readArticle() {
-    // chrome.windows.getCurrent(function (currentWindow) {
     chrome.tabs.query({ active: true, windowId: homeWindow.id },
             function (activeTabs) {
-                alert("Chile Tab" + activeTabs[0].id);
+                childTab = activeTabs[0];
                 chrome.tabs.executeScript(
-                    activeTabs[0].id,
+                    childTab.id,
                     {
                         code: `var speed = ${speed}; var timeout = ${timeout};`
                     },
                     function () {
-                        chrome.tabs.executeScript(activeTabs[0].id,
+                        chrome.tabs.executeScript(childTab.id,
                             { file: 'scroll.js', allFrames: true });
                     });
             });
-    // });
 };
 
 function clickLink() {
     
-    // chrome.windows.getCurrent(function (currentWindow) {
-    //     chrome.tabs.query({ active: true, windowId: currentWindow.id },
-
-    //         function (activeTabs) {
-                chrome.tabs.executeScript(
-                    homeTab.id,
-                    {
-                        code: `var index = ${currentLinkIndex};`
-                    },
-                    function () {
-                        chrome.tabs.executeScript(homeTab.id,
-                            { file: 'click_links.js', allFrames: true });
-                    });
-    //         });
-    // });
+    chrome.tabs.executeScript(
+        homeTab.id,
+        {
+            code: `var index = ${currentLinkIndex};`
+        },
+        function () {
+            chrome.tabs.executeScript(homeTab.id,
+                { file: 'click_links.js', allFrames: true });
+        });
 };
 
 chrome.runtime.onMessage.addListener(function (message, callback) {
@@ -66,6 +58,7 @@ chrome.runtime.onMessage.addListener(function (message, callback) {
 
     } else if (message.page === "popup" && message.status === "STOP") {
         startReading = false;
+        chrome.tabs.sendMessage(childTab.id, { page: "background", status: "STOP_SCROLLING" });
 
     } else if (message.page === "popup" && message.status === "ASK_FOR_PARAM") {
         chrome.runtime.sendMessage({ 
