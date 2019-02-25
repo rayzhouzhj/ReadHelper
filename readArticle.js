@@ -1,6 +1,6 @@
-var stopMe = false;
 
-function scroll(scrollSpeed, interval) {
+
+function read(scrollSpeed, interval) {
     let previous = window.scrollY;
     window.scrollBy(0, scrollSpeed);
     let current = window.scrollY;
@@ -14,15 +14,27 @@ function scroll(scrollSpeed, interval) {
         chrome.runtime.sendMessage({ page: "article", status: "ViEW_DONE" });
         window.close();
     } else {
-        setTimeout(scroll, interval, scrollSpeed, interval);
+        setTimeout(read, interval, scrollSpeed, interval);
+    }
+}
+
+function watchVideo(video){
+    video.onended = () => {
+        chrome.runtime.sendMessage({ page: "article", status: "ViEW_DONE" });
+        window.close();
     }
 }
 
 chrome.runtime.onMessage.addListener(function (message, callback) {
-    // alert("Received from scroll.js");
     if (message.page === "background" && message.status === "STOP_SCROLLING") {
         stopMe = true;
     }
 });
 
-scroll(speed, timeout * 1000);
+var stopMe = false;
+var videos = document.getElementsByTagName("video");
+if (videos.length > 0){
+    watchVideo(videos[0]);
+} else {
+    read(speed, timeout * 1000);
+}

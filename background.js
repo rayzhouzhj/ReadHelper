@@ -1,9 +1,12 @@
 
-let currentLinkIndex=1;
+let currentLinkIndex = 1;
+let startLinkIndex = 1;
 let startReading=false;
 let interval = 2;
 let speed=10;
 let timeout=0.5;
+let totalArticles = 10;
+let totalVideos = 10;
 let homeWindow;
 let homeTab;
 let childTab;
@@ -19,7 +22,7 @@ function readArticle() {
                     },
                     function () {
                         chrome.tabs.executeScript(childTab.id,
-                            { file: 'scroll.js', allFrames: true });
+                            { file: 'readArticle.js', allFrames: true });
                     });
             });
 };
@@ -40,11 +43,14 @@ function clickLink() {
 chrome.runtime.onMessage.addListener(function (message, callback) {
 
     if (message.page === "popup" && message.status === "START") {
+
         startReading = true;
         currentLinkIndex = message.index;
         speed = message.scrollSpeed;
         timeout = message.scrollTimeout;
         interval = message.readInterval;
+        totalArticles = message.totalArticles;
+        totalVideos = message.totalVideos;
 
         chrome.windows.getCurrent(function (currentWindow) {
             homeWindow = currentWindow;

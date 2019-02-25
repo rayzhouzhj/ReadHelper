@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Read Articles",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Stay on home page then start reading! It will iterate all links and auto scroll down to show you the article!",
     "permissions": [
         "https://www.google.com/*", 
