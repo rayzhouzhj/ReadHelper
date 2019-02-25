@@ -7,7 +7,6 @@ function startReading(){
     let timeout = document.getElementById("timeout").value;
     let interval = document.getElementById("interval").value;
     let totalArticles = document.getElementById("totalArticles").value;
-    let totalVideos = document.getElementById("totalVideos").value;
 
     if (!/^[0-9]+$/.test(startIndex)){
         alert("Reading index should be integer only!");
@@ -39,7 +38,6 @@ function startReading(){
         scrollSpeed: speed, 
         scrollTimeout: timeout,
         totalArticles: totalArticles,
-        totalVideos: totalVideos
     });
 }
 

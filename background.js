@@ -6,7 +6,6 @@ let interval = 2;
 let speed=10;
 let timeout=0.5;
 let totalArticles = 10;
-let totalVideos = 10;
 let homeWindow;
 let homeTab;
 let childTab;
@@ -50,7 +49,7 @@ chrome.runtime.onMessage.addListener(function (message, callback) {
         timeout = message.scrollTimeout;
         interval = message.readInterval;
         totalArticles = message.totalArticles;
-        totalVideos = message.totalVideos;
+        startLinkIndex = currentLinkIndex;
 
         chrome.windows.getCurrent(function (currentWindow) {
             homeWindow = currentWindow;
@@ -78,13 +77,13 @@ chrome.runtime.onMessage.addListener(function (message, callback) {
 
     } else if (startReading && message.page === "home" && message.status === "CLICKED_LINK") {
 
-        // if (currentLinkIndex > 3) {
-        //     startReading = false;
-        //     chrome.runtime.sendMessage({ page: "backgroud", status: "ALL_DONE", index: currentLinkIndex });
-        // } else {
+        if (currentLinkIndex >= startLinkIndex + totalArticles) {
+            startReading = false;
+            chrome.runtime.sendMessage({ page: "backgroud", status: "ALL_DONE", index: currentLinkIndex });
+        } else {
             setTimeout(readArticle, 1000);
             currentLinkIndex++;
-        // }
+        }
 
     } else if (startReading && message.page === "home" && message.status === "NO_LINK_CLICKED") {
         // read next article
